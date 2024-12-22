@@ -1,7 +1,8 @@
 from flask import Flask
+from flask_cors import CORS
 app = Flask(__name__)
+CORS(app)
 port=8080
-
 @app.route('/')
 def hello_world():
     return 'Hello, World!'
