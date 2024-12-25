@@ -15,18 +15,21 @@
               placeholder="Enter your email"
             />
           </div>
-  
-          <!-- Password Input -->
-          <div class="mb-4">
+          <div class="mb-4 ">
             <label for="password" class="block text-sm font-medium">Password</label>
             <input
               id="password"
               type="password"
+              @input="checkPasswordStrength"
               v-model="password"
               required
               class="w-full mt-2 p-2 bg-gray-700 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-red-500"
               placeholder="Enter your password"
             />
+           <div class="flex justify-between items-center mt-2" >
+            <p v-if="password" class="text-xs font-bold text-gray-400"> Strength: <span :class="strengthClass">{{ strengthValue }}</span></p>
+            <button @click="generatePassword" class="text-xs font-bold text-white bg-red-600 p-1 rounded-lg ml-[auto]" >Generate Password</button>
+           </div>
           </div>
   
           <!-- Confirm Password Input -->
@@ -41,8 +44,6 @@
               placeholder="Confirm your password"
             />
           </div>
-  
-          <!-- Register Button -->
           <button
             type="submit"
             class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 rounded-md transition duration-200"
@@ -59,15 +60,18 @@
       </div>
     </div>
   </template>
-  
+
   <script>
+  import generator from 'generate-password';
+  import {passwordStrength} from "check-password-strength"
   export default {
     name: "Register",
     data() {
       return {
         email: "",
-        password: "",
+        password: "123",
         confirmPassword: "",
+        strengthValue: "",
       };
     },
     methods: {
@@ -79,6 +83,37 @@
         // Registration logic goes here
         console.log("Registered:", this.email, this.password);
       },
+      checkPasswordStrength() {
+        const strength = passwordStrength(this.password);
+        this.strengthValue = strength.value;
+      },
+      generatePassword() {
+        this.password = generator.generate({
+          length: 12,
+          numbers: true,
+          symbols: true,
+          lowercase: true,
+          uppercase: true,
+        });
+        console.log(this.password)
+        this.checkPasswordStrength();
+      }
     },
+    computed:{
+      strengthClass() {
+      switch (this.strengthValue) {
+        case "Too Weak":
+          return "text-red-500 font-bold";
+        case "Weak":
+          return "text-yellow-500 font-bold";
+        case "Medium":
+          return "text-blue-500 font-bold";
+        case "Strong":
+          return "text-green-500 font-bold";
+        default:
+          return "";
+      }
+    }
+    }
   };
   </script>

@@ -1,13 +1,36 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
 const routes = [
-  { path: '/home', component: () => import('./components/Home.vue') },
-  { path: '/login', component: () => import('./components/Login.vue') },
-  { path: '/register', component: () => import('./components/Register.vue') },
-  { path: '/', redirect: '/login' }, // Redirect '/' to '/login'
+  { path: '/', component: () => import('./components/Home.vue') },
+  { path: '/login',
+    name: 'login'
+    , component: () => import('./components/Login.vue') },
+  { path: '/register', 
+    name: 'register',
+    component: () => import('./components/Register.vue') },
+  {
+    path: '/upoadvideo',
+    name: 'uploadvideo',
+    component:()=>import('./components/Video.vue'),
+    meta: { requiresAuth: true },
+  },
   { path: '/:pathMatch(.*)*', component: () => import('./components/PageNotFound.vue') }, // Catch-all route for 404
 ];
-export const router = createRouter({
+ const router = createRouter({
   history: createWebHistory(),
   routes,
 });
+
+router.beforeEach((to, from, next) => {
+
+  if (to.meta.requiresAuth && !localStorage.getItem('token')) {
+    next({ name: 'login' });
+  }else if (!localStorage.getItem('hasRegister') && to.name !== 'register') {
+    next({ name: 'register' });
+  }
+  else {
+    next();
+  }
+})
+
+export default router;
