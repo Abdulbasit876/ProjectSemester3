@@ -28,7 +28,7 @@
             />
            <div class="flex justify-between items-center mt-2" >
             <p v-if="password" class="text-xs font-bold text-gray-400"> Strength: <span :class="strengthClass">{{ strengthValue }}</span></p>
-            <button @click="generatePassword" class="text-xs font-bold text-white bg-red-600 p-1 rounded-lg ml-[auto]" >Generate Password</button>
+            <div @click="generatePassword" class="text-xs font-bold cursor-pointer  text-white bg-red-600 p-1 rounded-lg ml-[auto]" >Generate Password</div>
            </div>
           </div>
   
@@ -62,14 +62,14 @@
   </template>
 
   <script>
-  import generator from 'generate-password';
+  import generator from  'generate-password-browser';
   import {passwordStrength} from "check-password-strength"
   export default {
     name: "Register",
     data() {
       return {
         email: "",
-        password: "123",
+        password: "",
         confirmPassword: "",
         strengthValue: "",
       };
@@ -79,6 +79,8 @@
         if (this.password !== this.confirmPassword) {
           alert("Passwords do not match!");
           return;
+        }else{
+          this.$router.push("/login");
         }
         // Registration logic goes here
         console.log("Registered:", this.email, this.password);
@@ -88,8 +90,9 @@
         this.strengthValue = strength.value;
       },
       generatePassword() {
+      console.log("Called generatePassword")
         this.password = generator.generate({
-          length: 12,
+          length: 20,
           numbers: true,
           symbols: true,
           lowercase: true,
@@ -97,6 +100,7 @@
         });
         console.log(this.password)
         this.checkPasswordStrength();
+        this.confirmPassword = this.password;
       }
     },
     computed:{

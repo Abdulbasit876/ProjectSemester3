@@ -62,6 +62,12 @@
     methods: {
       handleLogin() {
         console.log("Login:", this.email, this.password);
+        if (!this.email || !this.password) {
+          alert("Please enter your email and password.");
+          return;
+        }else {
+          this.$router.push("/");
+        }
       },
     },
   };
